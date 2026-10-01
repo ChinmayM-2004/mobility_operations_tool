@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Driver Analytics | Mobility Ops Intelligence</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        .driver-page {
+            min-height: 100vh;
+            display: flex;
+            background: #f5f7fb;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .driver-sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: #101828;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .driver-brand {
+            padding: 26px 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .driver-brand-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 17px;
+        }
+
+        .driver-brand-title {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .driver-brand-subtitle {
+            font-size: 11px;
+            color: #98a2b3;
+            margin-top: 3px;
+        }
+
+        .driver-nav {
+            padding: 24px 14px;
+            flex: 1;
+        }
+
+        .driver-nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #667085;
+            letter-spacing: 1.3px;
+            padding: 0 12px 10px;
+        }
+
+        .driver-nav a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 11px 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            color: #b8c0cc;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.2s ease;
+        }
+
+        .driver-nav a:hover {
+            background: rgba(255,255,255,0.06);
+            color: #ffffff;
+        }
+
+        .driver-nav a.active {
+            background: rgba(79,70,229,0.18);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .driver-nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .driver-sidebar-footer {
+            padding: 18px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .driver-environment {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: #98a2b3;
+        }
+
+        .driver-status-dot {
+            width: 7px;
+            height: 7px;
+            background: #12b76a;
+            border-radius: 50%;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .driver-main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+        }
+
+        .driver-topbar {
+            height: 76px;
+            background: #ffffff;
+            border-bottom: 1px solid #eaecf0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 34px;
+        }
+
+        .driver-page-title {
+            font-size: 21px;
+            font-weight: 700;
+            margin: 0;
+            color: #101828;
+        }
+
+        .driver-page-subtitle {
+            font-size: 12px;
+            color: #667085;
+            margin-top: 4px;
+        }
+
+        .driver-topbar-badge {
+            padding: 7px 12px;
+            background: #f2f4f7;
+            color: #475467;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .driver-content {
+            padding: 30px 34px 45px;
+            max-width: 1450px;
+        }
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        .driver-search-card {
+            background: #ffffff;
+            border: 1px solid #eaecf0;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(16,24,40,0.03);
+        }
+
+        .driver-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #101828;
+            margin: 0 0 5px;
+        }
+
+        .driver-section-description {
+            font-size: 12px;
+            color: #667085;
+            margin: 0 0 18px;
+        }
+
+        .driver-search-form {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .driver-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .driver-form-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #344054;
+        }
+
+        .driver-form-input {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 13px;
+            color: #101828;
+            background: #ffffff;
+            outline: none;
+        }
+
+        .driver-form-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.10);
+        }
+
+        .driver-search-button {
+            height: 42px;
+            padding: 0 24px;
+            border: none;
+            border-radius: 8px;
+            background: #4f46e5;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .driver-search-button:hover {
+            background: #4338ca;
+        }
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+
+        .driver-empty {
+            background: #ffffff;
+            border: 1px solid #eaecf0;
+            border-radius: 14px;
+            padding: 70px 30px;
+            text-align: center;
+        }
+
+        .driver-empty-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 18px;
+            border-radius: 14px;
+            background: #eef2ff;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+
+        .driver-empty h2 {
+            font-size: 18px;
+            margin: 0 0 7px;
+            color: #101828;
+        }
+
+        .driver-empty p {
+            max-width: 460px;
+            margin: 0 auto;
+            color: #667085;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           DRIVER HEADER
+        ========================= */
+
+        .driver-profile-card {
+            background: #ffffff;
+            border: 1px solid #eaecf0;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(16,24,40,0.03);
+        }
+
+        .driver-profile-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .driver-avatar {
+            width: 58px;
+            height: 58px;
+            border-radius: 14px;
+            background: #eef2ff;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            font-weight: 750;
+        }
+
+        .driver-name {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 750;
+            color: #101828;
+        }
+
+        .driver-meta {
+            margin-top: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 12px;
+            color: #667085;
+        }
+
+        .driver-meta span {
+            padding-right: 8px;
+            border-right: 1px solid #d0d5dd;
+        }
+
+        .driver-meta span:last-child {
+            border-right: none;
+        }
+
+        .driver-active-badge {
+            padding: 7px 12px;
+            background: #ecfdf3;
+            color: #027a48;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .driver-inactive-badge {
+            padding: 7px 12px;
+            background: #f2f4f7;
+            color: #475467;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           KPI CARDS
+        ========================= */
+
+        .driver-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .driver-kpi {
+            background: #ffffff;
+            border: 1px solid #eaecf0;
+            border-radius: 13px;
+            padding: 19px;
+            box-shadow: 0 2px 8px rgba(16,24,40,0.03);
+        }
+
+        .driver-kpi-label {
+            color: #667085;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .driver-kpi-value {
+            margin-top: 8px;
+            font-size: 25px;
+            font-weight: 750;
+            color: #101828;
+        }
+
+        .driver-kpi-note {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #98a2b3;
+        }
+
+        /* =========================
+           CONTENT GRID
+        ========================= */
+
+        .driver-content-grid {
+            display: grid;
+            grid-template-columns: 1.45fr 1fr;
+            gap: 20px;
+        }
+
+        .driver-card {
+            background: #ffffff;
+            border: 1px solid #eaecf0;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 2px 8px rgba(16,24,40,0.03);
+        }
+
+        .driver-card-header {
+            margin-bottom: 20px;
+        }
+
+        .driver-card-title {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: #101828;
+        }
+
+        .driver-card-subtitle {
+            margin: 5px 0 0;
+            font-size: 11px;
+            color: #667085;
+        }
+
+        /* =========================
+           METRICS
+        ========================= */
+
+        .driver-metric-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 0;
+            border-bottom: 1px solid #f2f4f7;
+        }
+
+        .driver-metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .driver-metric-name {
+            color: #667085;
+            font-size: 12px;
+        }
+
+        .driver-metric-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: #101828;
+        }
+
+        /* =========================
+           PROGRESS
+        ========================= */
+
+        .driver-progress-section {
+            margin-top: 22px;
+        }
+
+        .driver-progress-item {
+            margin-bottom: 18px;
+        }
+
+        .driver-progress-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 7px;
+        }
+
+        .driver-progress-label {
+            font-size: 12px;
+            color: #475467;
+            font-weight: 600;
+        }
+
+        .driver-progress-value {
+            font-size: 12px;
+            color: #101828;
+            font-weight: 700;
+        }
+
+        .driver-progress-track {
+            width: 100%;
+            height: 8px;
+            background: #eaecf0;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .driver-progress-fill {
+            height: 100%;
+            border-radius: 20px;
+            width: 0;
+            transition: width 0.6s ease;
+        }
+
+        .driver-success {
+            background: #12b76a;
+        }
+
+        .driver-danger {
+            background: #f04438;
+        }
+
+        /* =========================
+           STATUS BOX
+        ========================= */
+
+        .driver-status-box {
+            margin-top: 22px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8f9fc;
+            border: 1px solid #eaecf0;
+        }
+
+        .driver-status-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #667085;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .driver-status-message {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .driver-good {
+            color: #039855;
+        }
+
+        .driver-warning {
+            color: #dc6803;
+        }
+
+        .driver-bad {
+            color: #d92d20;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+            .driver-kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .driver-content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .driver-sidebar {
+                width: 210px;
+            }
+
+            .driver-main {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+            }
+
+            .driver-content {
+                padding: 22px;
+            }
+
+            .driver-profile-card {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .driver-sidebar {
+                display: none;
+            }
+
+            .driver-main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .driver-kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .driver-search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .driver-topbar {
+                padding: 0 18px;
+            }
+
+            .driver-topbar-badge {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="driver-page">
+
+    <!-- SIDEBAR -->
+    <aside class="driver-sidebar">
+
+        <div class="driver-brand">
+
+            <div class="driver-brand-mark">
+                M
+            </div>
+
+            <div>
+                <div class="driver-brand-title">
+                    Mobility Ops
+                </div>
+
+                <div class="driver-brand-subtitle">
+                    Intelligence Engine
+                </div>
+            </div>
+
+        </div>
+
+
+        <nav class="driver-nav">
+
+            <div class="driver-nav-label">
+                WORKSPACE
+            </div>
+
+            <a href="{{ url_for('dashboard') }}">
+                <span class="driver-nav-icon">▦</span>
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('driver') }}" class="active">
+                <span class="driver-nav-icon">♙</span>
+                Driver Analytics
+            </a>
+
+            <a href="{{ url_for('zone') }}">
+                <span class="driver-nav-icon">⌖</span>
+                Zone Analytics
+            </a>
+
+            <a href="{{ url_for('operations') }}">
+                <span class="driver-nav-icon">◈</span>
+                Operations
+            </a>
+
+            <a href="{{ url_for('analytics_dashboard') }}">
+                <span class="driver-nav-icon">◫</span>
+                Advanced Analytics
+            </a>
+
+        </nav>
+
+
+        <div class="driver-sidebar-footer">
+
+            <div class="driver-environment">
+                <span class="driver-status-dot"></span>
+                Local Environment
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="driver-main">
+
+        <header class="driver-topbar">
+
+            <div>
+
+                <h1 class="driver-page-title">
+                    Driver Analytics
+                </h1>
+
+                <div class="driver-page-subtitle">
+                    Analyze driver performance, trips, revenue and cancellations
+                </div>
+
+            </div>
+
+            <div class="driver-topbar-badge">
+                Operations Intelligence Console
+            </div>
+
+        </header>
+
+
+        <section class="driver-content">
+
+            <!-- SEARCH -->
+            <div class="driver-search-card">
+
+                <h2 class="driver-section-title">
+                    Analyze a Driver
+                </h2>
+
+                <p class="driver-section-description">
+                    Enter a driver ID to view detailed performance metrics.
+                </p>
+
+                <form
+                    method="GET"
+                    action="{{ url_for('driver') }}"
+                    class="driver-search-form"
+                >
+
+                    <div class="driver-form-group">
+
+                        <label class="driver-form-label">
+                            Driver ID
+                        </label>
+
+                        <input
+                            type="text"
+                            name="driver_id"
+                            class="driver-form-input"
+                            placeholder="e.g. D283"
+                            value="{{ driver_id or '' }}"
+                            required
+                        >
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="driver-search-button"
+                    >
+                        Analyze Driver
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            {% if performance %}
+
+            <!-- DRIVER PROFILE -->
+            <div class="driver-profile-card">
+
+                <div class="driver-profile-left">
+
+                    <div class="driver-avatar">
+                        {{ performance.driver.driver_name[0] }}
+                    </div>
+
+                    <div>
+
+                        <h2 class="driver-name">
+                            {{ performance.driver.driver_name }}
+                        </h2>
+
+                        <div class="driver-meta">
+
+                            <span>
+                                {{ performance.driver.driver_id }}
+                            </span>
+
+                            <span>
+                                {{ performance.driver.city }}
+                            </span>
+
+                            <span>
+                                {{ performance.driver.vehicle_type }}
+                            </span>
+
+                            <span>
+                                Rating {{ performance.driver.rating }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {% if performance.driver.status.lower() == "active" %}
+
+                    <div class="driver-active-badge">
+                        ● Active
+                    </div>
+
+                {% else %}
+
+                    <div class="driver-inactive-badge">
+                        ● Inactive
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- KPI CARDS -->
+            <div class="driver-kpi-grid">
+
+                <div class="driver-kpi">
+
+                    <div class="driver-kpi-label">
+                        Total Trips
+                    </div>
+
+                    <div class="driver-kpi-value">
+                        {{ performance.total_trips }}
+                    </div>
+
+                    <div class="driver-kpi-note">
+                        Assigned trips
+                    </div>
+
+                </div>
+
+
+                <div class="driver-kpi">
+
+                    <div class="driver-kpi-label">
+                        Completed Trips
+                    </div>
+
+                    <div class="driver-kpi-value">
+                        {{ performance.completed_trips }}
+                    </div>
+
+                    <div class="driver-kpi-note">
+                        Successfully completed
+                    </div>
+
+                </div>
+
+
+                <div class="driver-kpi">
+
+                    <div class="driver-kpi-label">
+                        Revenue
+                    </div>
+
+                    <div class="driver-kpi-value">
+                        ₹{{ "{:,.0f}".format(performance.revenue) }}
+                    </div>
+
+                    <div class="driver-kpi-note">
+                        Total generated revenue
+                    </div>
+
+                </div>
+
+
+                <div class="driver-kpi">
+
+                    <div class="driver-kpi-label">
+                        Avg Fare
+                    </div>
+
+                    <div class="driver-kpi-value">
+                        ₹{{ "{:,.2f}".format(performance.average_fare) }}
+                    </div>
+
+                    <div class="driver-kpi-note">
+                        Average fare per trip
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ANALYTICS -->
+            <div class="driver-content-grid">
+
+                <!-- PERFORMANCE -->
+                <div class="driver-card">
+
+                    <div class="driver-card-header">
+
+                        <h2 class="driver-card-title">
+                            Driver Performance
+                        </h2>
+
+                        <p class="driver-card-subtitle">
+                            Detailed operational metrics
+                        </p>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            Total Trips
+                        </span>
+
+                        <span class="driver-metric-value">
+                            {{ performance.total_trips }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            Completed Trips
+                        </span>
+
+                        <span class="driver-metric-value">
+                            {{ performance.completed_trips }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            Cancelled Trips
+                        </span>
+
+                        <span class="driver-metric-value">
+                            {{ performance.cancelled_trips }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            Cancellation Rate
+                        </span>
+
+                        <span class="driver-metric-value">
+                            {{ performance.cancellation_rate }}%
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            Revenue
+                        </span>
+
+                        <span class="driver-metric-value">
+                            ₹{{ "{:,.2f}".format(performance.revenue) }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            Average Fare
+                        </span>
+
+                        <span class="driver-metric-value">
+                            ₹{{ "{:,.2f}".format(performance.average_fare) }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            Average Distance
+                        </span>
+
+                        <span class="driver-metric-value">
+                            {{ performance.average_distance }} km
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-progress-section">
+
+                        <div class="driver-progress-item">
+
+                            <div class="driver-progress-top">
+
+                                <span class="driver-progress-label">
+                                    Completion Performance
+                                </span>
+
+                                {% set completion_rate =
+                                    ((performance.completed_trips / performance.total_trips) * 100)
+                                    if performance.total_trips else 0
+                                %}
+
+                                <span class="driver-progress-value">
+                                    {{ completion_rate | round(1) }}%
+                                </span>
+
+                            </div>
+
+                            <div class="driver-progress-track">
+
+                                <div
+                                    class="driver-progress-fill driver-success"
+                                    data-width="{{ completion_rate }}"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="driver-progress-item">
+
+                            <div class="driver-progress-top">
+
+                                <span class="driver-progress-label">
+                                    Cancellation Rate
+                                </span>
+
+                                <span class="driver-progress-value">
+                                    {{ performance.cancellation_rate }}%
+                                </span>
+
+                            </div>
+
+                            <div class="driver-progress-track">
+
+                                <div
+                                    class="driver-progress-fill driver-danger"
+                                    data-width="{{ performance.cancellation_rate }}"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DRIVER HEALTH -->
+                <div class="driver-card">
+
+                    <div class="driver-card-header">
+
+                        <h2 class="driver-card-title">
+                            Driver Health
+                        </h2>
+
+                        <p class="driver-card-subtitle">
+                            Operational performance interpretation
+                        </p>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            Rating
+                        </span>
+
+                        <span class="driver-metric-value">
+                            {{ performance.driver.rating }} / 5.0
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            Status
+                        </span>
+
+                        <span class="driver-metric-value">
+                            {{ performance.driver.status }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            Vehicle
+                        </span>
+
+                        <span class="driver-metric-value">
+                            {{ performance.driver.vehicle_type }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-metric-row">
+
+                        <span class="driver-metric-name">
+                            City
+                        </span>
+
+                        <span class="driver-metric-value">
+                            {{ performance.driver.city }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="driver-status-box">
+
+                        <div class="driver-status-title">
+                            Performance Status
+                        </div>
+
+
+                        {% if performance.cancellation_rate >= 20 %}
+
+                            <div class="driver-status-message driver-bad">
+                                High cancellation rate
+                            </div>
+
+                        {% elif performance.cancellation_rate >= 10 %}
+
+                            <div class="driver-status-message driver-warning">
+                                Moderate cancellation rate
+                            </div>
+
+                        {% else %}
+
+                            <div class="driver-status-message driver-good">
+                                Low cancellation rate
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% else %}
+
+            <!-- EMPTY STATE -->
+
+            <div class="driver-empty">
+
+                <div class="driver-empty-icon">
+                    ♙
+                </div>
+
+                <h2>
+                    Search for a Driver
+                </h2>
+
+                <p>
+                    Enter a driver ID above to view trips, completed rides,
+                    cancellations, revenue, average fare, distance and
+                    operational performance.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        document.querySelectorAll(".driver-progress-fill").forEach(function (bar) {
+
+            const value = parseFloat(bar.dataset.width || 0);
+
+            const safeValue = Math.max(0, Math.min(100, value));
+
+            bar.style.width = safeValue + "%";
+
+        });
+
+    });
+</script>
+
+</body>
+</html>

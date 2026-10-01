@@ -1,0 +1,1615 @@
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    Operations | Mobility Operations
+</title>
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Inter, Arial, sans-serif;
+        background: #f5f7fb;
+        color: #1f2937;
+    }
+
+    .app {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* ================= SIDEBAR ================= */
+
+    .sidebar {
+        width: 250px;
+        background: #111827;
+        color: #ffffff;
+        padding: 24px 16px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+    }
+
+    .brand {
+        padding: 8px 12px 28px;
+        border-bottom: 1px solid #374151;
+        margin-bottom: 22px;
+    }
+
+    .brand-title {
+        font-size: 19px;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .brand-subtitle {
+        color: #9ca3af;
+        font-size: 12px;
+        margin-top: 7px;
+    }
+
+    .nav-section {
+        margin-bottom: 24px;
+    }
+
+    .nav-label {
+        color: #6b7280;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        padding: 0 12px;
+        margin-bottom: 9px;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 11px 12px;
+        margin-bottom: 4px;
+        border-radius: 8px;
+        color: #d1d5db;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.2s ease;
+    }
+
+    .nav-link:hover {
+        background: #1f2937;
+        color: #ffffff;
+    }
+
+    .nav-link.active {
+        background: #2563eb;
+        color: #ffffff;
+    }
+
+    .nav-icon {
+        width: 20px;
+        text-align: center;
+        font-size: 15px;
+    }
+
+    .sidebar-footer {
+        margin-top: auto;
+        padding: 14px 12px;
+        border-top: 1px solid #374151;
+    }
+
+    .environment {
+        font-size: 11px;
+        color: #9ca3af;
+    }
+
+    .environment strong {
+        display: block;
+        color: #d1d5db;
+        margin-top: 4px;
+        font-size: 12px;
+    }
+
+    /* ================= MAIN ================= */
+
+    .main {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        min-height: 100vh;
+    }
+
+    .topbar {
+        height: 72px;
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+    }
+
+    .topbar-title {
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+    .topbar-title strong {
+        color: #111827;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+        border-radius: 20px;
+        padding: 7px 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #10b981;
+    }
+
+    .content {
+        padding: 30px 32px 40px;
+        max-width: 1600px;
+    }
+
+    .page-header {
+        margin-bottom: 28px;
+    }
+
+    .eyebrow {
+        color: #2563eb;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.4px;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+
+    .page-header h1 {
+        font-size: 28px;
+        color: #111827;
+        margin-bottom: 7px;
+    }
+
+    .page-header p {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    /* ================= SECTION ================= */
+
+    .section {
+        margin-bottom: 30px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+    }
+
+    .section-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .section-description {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: 3px;
+    }
+
+    /* ================= CARDS ================= */
+
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    }
+
+    .metric-label {
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 10px;
+    }
+
+    .metric-value {
+        font-size: 26px;
+        font-weight: 750;
+        color: #111827;
+    }
+
+    .metric-sub {
+        margin-top: 7px;
+        font-size: 12px;
+        color: #9ca3af;
+    }
+
+    .metric-blue {
+        border-top: 3px solid #2563eb;
+    }
+
+    .metric-orange {
+        border-top: 3px solid #f59e0b;
+    }
+
+    .metric-red {
+        border-top: 3px solid #ef4444;
+    }
+
+    .metric-green {
+        border-top: 3px solid #10b981;
+    }
+
+    /* ================= TWO COLUMN ================= */
+
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .wide-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    }
+
+    /* ================= TABLE ================= */
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    thead th {
+        text-align: left;
+        padding: 11px 10px;
+        background: #f8fafc;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    tbody td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #eef0f3;
+        color: #374151;
+    }
+
+    tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .number {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    /* ================= BADGES ================= */
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .badge-green {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .badge-red {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .badge-orange {
+        background: #fffbeb;
+        color: #b45309;
+    }
+
+    .badge-blue {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .badge-gray {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    /* ================= PROGRESS ================= */
+
+    .progress-container {
+        width: 100%;
+        height: 7px;
+        background: #eef2f7;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 7px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 0%;
+        border-radius: 10px;
+        transition: width 0.4s ease;
+    }
+
+    .progress-blue {
+        background: #2563eb;
+    }
+
+    .progress-red {
+        background: #ef4444;
+    }
+
+    .progress-green {
+        background: #10b981;
+    }
+
+    .progress-orange {
+        background: #f59e0b;
+    }
+
+    /* ================= EMPTY ================= */
+
+    .empty {
+        padding: 30px;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 13px;
+    }
+
+    /* ================= FOOTER ================= */
+
+    .footer {
+        margin-top: 35px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        color: #9ca3af;
+        font-size: 11px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 1200px) {
+
+        .card-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 800px) {
+
+        .sidebar {
+            width: 210px;
+        }
+
+        .main {
+            margin-left: 210px;
+            width: calc(100% - 210px);
+        }
+
+        .content {
+            padding: 22px 18px;
+        }
+
+        .topbar {
+            padding: 0 18px;
+        }
+    }
+
+    @media (max-width: 620px) {
+
+        .sidebar {
+            position: static;
+            width: 100%;
+            min-height: auto;
+        }
+
+        .app {
+            display: block;
+        }
+
+        .main {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .sidebar-footer {
+            display: none;
+        }
+
+        .card-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .footer {
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+
+</style>
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-title">
+            Mobility Ops<br>
+            Intelligence
+        </div>
+
+        <div class="brand-subtitle">
+            Marketplace Operations Engine
+        </div>
+
+    </div>
+
+
+    <div class="nav-section">
+
+        <div class="nav-label">
+            WORKSPACE
+        </div>
+
+        <a
+            href="{{ url_for('index') }}"
+            class="nav-link"
+        >
+            <span class="nav-icon">⌂</span>
+            Home
+        </a>
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="nav-link"
+        >
+            <span class="nav-icon">▦</span>
+            Dashboard
+        </a>
+
+        <a
+            href="{{ url_for('driver') }}"
+            class="nav-link"
+        >
+            <span class="nav-icon">♙</span>
+            Driver Analytics
+        </a>
+
+        <a
+            href="{{ url_for('zone') }}"
+            class="nav-link"
+        >
+            <span class="nav-icon">⌖</span>
+            Zone Analytics
+        </a>
+
+        <a
+            href="{{ url_for('operations') }}"
+            class="nav-link active"
+        >
+            <span class="nav-icon">◈</span>
+            Operations
+        </a>
+
+        <a
+            href="{{ url_for('analytics_dashboard') }}"
+            class="nav-link"
+        >
+            <span class="nav-icon">◉</span>
+            Analytics
+        </a>
+
+    </div>
+
+
+    <div class="nav-section">
+
+        <div class="nav-label">
+            SYSTEM
+        </div>
+
+        <a
+            href="{{ url_for('index') }}"
+            class="nav-link"
+        >
+            <span class="nav-icon">↥</span>
+            Data Upload
+        </a>
+
+    </div>
+
+
+    <div class="sidebar-footer">
+
+        <div class="environment">
+
+            Environment
+
+            <strong>
+                ● Local Operations Console
+            </strong>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+    <header class="topbar">
+
+        <div class="topbar-title">
+            Operations /
+            <strong>Marketplace Intelligence</strong>
+        </div>
+
+        <div class="status-badge">
+
+            <span class="status-dot"></span>
+
+            Data Loaded
+
+        </div>
+
+    </header>
+
+
+    <div class="content">
+
+        <!-- ================= HEADER ================= -->
+
+        <div class="page-header">
+
+            <div class="eyebrow">
+                MARKETPLACE INTELLIGENCE
+            </div>
+
+            <h1>
+                Operations Overview
+            </h1>
+
+            <p>
+                Monitor demand, cancellations, utilization,
+                idle time, and operational performance
+                across the marketplace.
+            </p>
+
+        </div>
+
+
+        <!-- ================= PEAK DEMAND ================= -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <div class="section-title">
+                        Peak Demand
+                    </div>
+
+                    <div class="section-description">
+                        Highest-demand time periods across the marketplace
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% if peak_demand %}
+
+            <div class="card-grid">
+
+                {% for item in peak_demand %}
+
+                    {% if loop.index <= 4 %}
+
+                    <div class="card metric-blue">
+
+                        <div class="metric-label">
+                            Demand Rank #{{ loop.index }}
+                        </div>
+
+                        <div class="metric-value">
+                            {{ item.requests }}
+                        </div>
+
+                        <div class="metric-sub">
+                            {{ item.hour_label }}
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <div class="wide-card">
+
+                <div class="empty">
+                    No peak demand data available.
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- ================= DEMAND + CANCELLATION ================= -->
+
+        <section class="section">
+
+            <div class="two-column">
+
+
+                <!-- DEMAND -->
+
+                <div class="wide-card">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <div class="section-title">
+                                Demand by Time
+                            </div>
+
+                            <div class="section-description">
+                                Top observed demand periods
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if peak_demand %}
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Period
+                                    </th>
+
+                                    <th>
+                                        Requests
+                                    </th>
+
+                                    <th>
+                                        Demand
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for item in peak_demand %}
+
+                                    {% if loop.index <= 10 %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ item.hour_label }}
+                                        </td>
+
+                                        <td class="number">
+                                            {{ item.requests }}
+                                        </td>
+
+                                        <td style="min-width: 130px;">
+
+                                            <div class="progress-container">
+
+                                                <div
+                                                    class="progress-bar progress-blue demand-progress"
+                                                    data-value="{{ item.requests }}"
+                                                ></div>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="empty">
+                        No demand data available.
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- CANCELLATION -->
+
+                <div class="wide-card">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <div class="section-title">
+                                Cancellation Intelligence
+                            </div>
+
+                            <div class="section-description">
+                                Breakdown of cancelled trips by reason
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if cancellation_intelligence and cancellation_intelligence.by_reason %}
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Reason
+                                    </th>
+
+                                    <th>
+                                        Trips
+                                    </th>
+
+                                    <th>
+                                        Share
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for item in cancellation_intelligence.by_reason %}
+
+                                    {% if loop.index <= 10 %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ item.reason }}
+                                        </td>
+
+                                        <td class="number">
+                                            {{ item.cancelled_trips }}
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge badge-red">
+                                                {{ item.percentage | round(1) }}%
+                                            </span>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="empty">
+                        No cancellation intelligence available.
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ZONE DEMAND ================= -->
+
+        <section class="section">
+
+            <div class="wide-card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-title">
+                            Zone Demand
+                        </div>
+
+                        <div class="section-description">
+                            Highest-requested pickup zones across the marketplace
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {% if zone_demand %}
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    City
+                                </th>
+
+                                <th>
+                                    Zone
+                                </th>
+
+                                <th>
+                                    Requests
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for zone in zone_demand %}
+
+                                {% if loop.index <= 10 %}
+
+                                <tr>
+
+                                    <td class="number">
+                                        {{ loop.index }}
+                                    </td>
+
+                                    <td>
+                                        {{ zone.city }}
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            {{ zone.zone }}
+                                        </strong>
+                                    </td>
+
+                                    <td class="number">
+                                        {{ zone.requests }}
+                                    </td>
+
+                                </tr>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty">
+                    No zone demand data available.
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= UTILIZATION ================= -->
+
+        <section class="section">
+
+            <div class="wide-card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-title">
+                            Driver Utilization
+                        </div>
+
+                        <div class="section-description">
+                            Top utilized drivers based on online and busy time
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {% if utilization %}
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Driver
+                                </th>
+
+                                <th>
+                                    City
+                                </th>
+
+                                <th>
+                                    Online Minutes
+                                </th>
+
+                                <th>
+                                    Busy Minutes
+                                </th>
+
+                                <th>
+                                    Utilization
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for driver in utilization %}
+
+                                {% if loop.index <= 10 %}
+
+                                <tr>
+
+                                    <td class="number">
+                                        {{ loop.index }}
+                                    </td>
+
+
+                                    <td>
+
+                                        <strong>
+                                            {{ driver.driver_name }}
+                                        </strong>
+
+                                        <div
+                                            style="
+                                                font-size:11px;
+                                                color:#9ca3af;
+                                                margin-top:3px;
+                                            "
+                                        >
+                                            {{ driver.driver_id }}
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        {{ driver.city }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ driver.online_minutes | round(1) }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ driver.busy_minutes | round(1) }}
+                                    </td>
+
+
+                                    <td style="min-width:170px;">
+
+                                        <strong>
+                                            {{ driver.utilization | round(1) }}%
+                                        </strong>
+
+                                        <div class="progress-container">
+
+                                            <div
+                                                class="
+                                                    progress-bar
+                                                    {% if driver.utilization < 50 %}
+                                                        progress-red
+                                                    {% else %}
+                                                        progress-green
+                                                    {% endif %}
+                                                    utilization-progress
+                                                "
+                                                data-value="{{ driver.utilization }}"
+                                            ></div>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty">
+                    No utilization data available.
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= IDLE + CONSECUTIVE ================= -->
+
+        <section class="section">
+
+            <div class="two-column">
+
+
+                <!-- IDLE TIME -->
+
+                <div class="wide-card">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <div class="section-title">
+                                Idle Time Analysis
+                            </div>
+
+                            <div class="section-description">
+                                Drivers experiencing extended idle periods
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if idle_analysis %}
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Driver
+                                    </th>
+
+                                    <th>
+                                        Start
+                                    </th>
+
+                                    <th>
+                                        End
+                                    </th>
+
+                                    <th>
+                                        Idle Minutes
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for item in idle_analysis %}
+
+                                    {% if loop.index <= 10 %}
+
+                                    <tr>
+
+                                        <td>
+
+                                            <strong>
+                                                {{ item.driver_name }}
+                                            </strong>
+
+                                            <div
+                                                style="
+                                                    font-size:11px;
+                                                    color:#9ca3af;
+                                                    margin-top:3px;
+                                                "
+                                            >
+                                                {{ item.driver_id }}
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+                                            {{ item.start_time }}
+                                        </td>
+
+                                        <td>
+                                            {{ item.end_time }}
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge badge-orange">
+                                                {{ item.idle_minutes | round(1) }}
+                                            </span>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="empty">
+                        No idle-time data available.
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- CONSECUTIVE TRIPS -->
+
+                <div class="wide-card">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <div class="section-title">
+                                Consecutive Trip Activity
+                            </div>
+
+                            <div class="section-description">
+                                Driver trip sequences with short gaps
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if consecutive_trips %}
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Driver
+                                    </th>
+
+                                    <th>
+                                        Trips
+                                    </th>
+
+                                    <th>
+                                        Start
+                                    </th>
+
+                                    <th>
+                                        End
+                                    </th>
+
+                                    <th>
+                                        Turnaround
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for item in consecutive_trips %}
+
+                                    {% if loop.index <= 10 %}
+
+                                    <tr>
+
+                                        <td>
+
+                                            <strong>
+                                                {{ item.driver_name }}
+                                            </strong>
+
+                                            <div
+                                                style="
+                                                    font-size:11px;
+                                                    color:#9ca3af;
+                                                    margin-top:3px;
+                                                "
+                                            >
+                                                {{ item.driver_id }}
+                                            </div>
+
+                                        </td>
+
+
+                                        <td class="number">
+                                            {{ item.sequence_length }}
+                                        </td>
+
+
+                                        <td>
+                                            {{ item.start_time }}
+                                        </td>
+
+
+                                        <td>
+                                            {{ item.end_time }}
+                                        </td>
+
+
+                                        <td>
+
+                                            <span class="badge badge-blue">
+                                                {{ item.total_turnaround_minutes | round(1) }} min
+                                            </span>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="empty">
+                        No consecutive-trip analysis available.
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= DATASET ================= -->
+
+        <section class="section">
+
+            <div class="wide-card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-title">
+                            Dataset
+                        </div>
+
+                        <div class="section-description">
+                            Current loaded records
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-grid">
+
+                    <div class="card metric-blue">
+
+                        <div class="metric-label">
+                            Drivers
+                        </div>
+
+                        <div class="metric-value">
+                            {{ summary.drivers }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="card metric-green">
+
+                        <div class="metric-label">
+                            Trips
+                        </div>
+
+                        <div class="metric-value">
+                            {{ summary.trips }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="card metric-orange">
+
+                        <div class="metric-label">
+                            Zones
+                        </div>
+
+                        <div class="metric-value">
+                            {{ summary.zones }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="card metric-red">
+
+                        <div class="metric-label">
+                            Activity Records
+                        </div>
+
+                        <div class="metric-value">
+                            {{ summary.activity_records }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= VALIDATION ================= -->
+
+        <section class="section">
+
+            <div class="wide-card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-title">
+                            Data Validation
+                        </div>
+
+                        <div class="section-description">
+                            Quality checks performed on the loaded datasets
+                        </div>
+
+                    </div>
+
+
+                    {% if validation.valid %}
+
+                        <span class="badge badge-green">
+                            Validation Passed
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge badge-red">
+                            Validation Failed
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="card-grid">
+
+                    <div class="card metric-red">
+
+                        <div class="metric-label">
+                            Errors
+                        </div>
+
+                        <div class="metric-value">
+                            {{ validation.error_count }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="card metric-orange">
+
+                        <div class="metric-label">
+                            Warnings
+                        </div>
+
+                        <div class="metric-value">
+                            {{ validation.warning_count }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= FOOTER ================= -->
+
+        <div class="footer">
+
+            <span>
+                Mobility Marketplace Operations Intelligence Engine
+            </span>
+
+            <span>
+                Operations Intelligence Console · Local Environment
+            </span>
+
+        </div>
+
+    </div>
+
+</main>

@@ -1,0 +1,1080 @@
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Mobility Ops Intelligence</title>
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Inter, Arial, sans-serif;
+        background: #f5f7fb;
+        color: #1f2937;
+    }
+
+    .app-shell {
+        min-height: 100vh;
+        display: flex;
+    }
+
+    /* ================= SIDEBAR ================= */
+
+    .sidebar {
+        width: 250px;
+        background: #111827;
+        color: white;
+        padding: 24px 16px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .brand {
+        padding: 8px 12px 28px;
+        border-bottom: 1px solid #374151;
+        margin-bottom: 22px;
+    }
+
+    .brand-title {
+        font-size: 19px;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .brand-subtitle {
+        color: #9ca3af;
+        font-size: 12px;
+        margin-top: 7px;
+    }
+
+    .nav-label {
+        color: #6b7280;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        padding: 0 12px;
+        margin-bottom: 9px;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 11px 12px;
+        margin-bottom: 4px;
+        border-radius: 8px;
+        color: #d1d5db;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.2s ease;
+    }
+
+    .nav-link:hover {
+        background: #1f2937;
+        color: white;
+    }
+
+    .nav-link.active {
+        background: #2563eb;
+        color: white;
+    }
+
+    .nav-icon {
+        width: 20px;
+        text-align: center;
+        font-size: 15px;
+    }
+
+    .sidebar-footer {
+        margin-top: auto;
+        padding: 14px 12px;
+        border-top: 1px solid #374151;
+    }
+
+    .environment {
+        color: #9ca3af;
+        font-size: 11px;
+    }
+
+    .environment strong {
+        display: block;
+        color: #d1d5db;
+        margin-top: 4px;
+        font-size: 12px;
+    }
+
+    /* ================= MAIN ================= */
+
+    .main {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        min-height: 100vh;
+    }
+
+    .topbar {
+        height: 72px;
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+    }
+
+    .topbar-title {
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+    .topbar-title strong {
+        color: #111827;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+        border-radius: 20px;
+        padding: 7px 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #2563eb;
+    }
+
+    .content {
+        padding: 40px 32px;
+        max-width: 1450px;
+    }
+
+    /* ================= HERO ================= */
+
+    .hero {
+        background: linear-gradient(
+            135deg,
+            #111827 0%,
+            #1e3a8a 100%
+        );
+
+        border-radius: 16px;
+        padding: 42px;
+        color: white;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero::after {
+        content: "";
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.05);
+        right: -80px;
+        top: -100px;
+    }
+
+    .hero-label {
+        color: #93c5fd;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        margin-bottom: 10px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+        line-height: 1.2;
+        margin: 0 0 12px;
+        max-width: 760px;
+    }
+
+    .hero p {
+        color: #dbeafe;
+        font-size: 14px;
+        line-height: 1.7;
+        max-width: 700px;
+        margin: 0;
+    }
+
+    /* ================= MAIN GRID ================= */
+
+    .main-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(300px, 0.8fr);
+        gap: 20px;
+        align-items: start;
+    }
+
+    .panel {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 24px;
+        box-shadow: 0 2px 7px rgba(15, 23, 42, 0.04);
+    }
+
+    .panel-header {
+        margin-bottom: 22px;
+    }
+
+    .panel-header h2 {
+        margin: 0 0 6px;
+        font-size: 19px;
+        color: #111827;
+    }
+
+    .panel-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    /* ================= ERROR ================= */
+
+    .error-box {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        padding: 13px 15px;
+        border-radius: 9px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+    /* ================= FILE INPUT ================= */
+
+    .file-group {
+        margin-bottom: 17px;
+    }
+
+    .file-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .file-label span {
+        color: #9ca3af;
+        font-weight: 400;
+        margin-left: 4px;
+    }
+
+    .file-input-wrapper {
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        padding: 11px;
+        background: #f9fafb;
+        transition: 0.2s ease;
+    }
+
+    .file-input-wrapper:hover {
+        border-color: #93c5fd;
+        background: #f8fbff;
+    }
+
+    input[type="file"] {
+        width: 100%;
+        font-size: 12px;
+        color: #4b5563;
+    }
+
+    input[type="file"]::file-selector-button {
+        border: none;
+        background: #e5edff;
+        color: #1d4ed8;
+        padding: 8px 12px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+        background: #dbeafe;
+    }
+
+    .upload-button {
+        width: 100%;
+        border: none;
+        border-radius: 9px;
+        background: #2563eb;
+        color: white;
+        padding: 13px 18px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 6px;
+        transition: 0.2s ease;
+    }
+
+    .upload-button:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    /* ================= REQUIREMENTS ================= */
+
+    .requirements {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+    }
+
+    .requirement {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        padding: 12px;
+        background: #f8fafc;
+        border: 1px solid #eef2f7;
+        border-radius: 9px;
+    }
+
+    .requirement-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: #eff6ff;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .requirement strong {
+        display: block;
+        font-size: 12px;
+        color: #111827;
+        margin-bottom: 3px;
+    }
+
+    .requirement span {
+        font-size: 11px;
+        color: #6b7280;
+        line-height: 1.4;
+    }
+
+    /* ================= SAMPLE DATA ================= */
+
+    .sample-panel {
+        margin-top: 20px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .sample-panel h3 {
+        margin: 0 0 6px;
+        color: #111827;
+        font-size: 15px;
+    }
+
+    .sample-panel p {
+        margin: 0 0 15px;
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .sample-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        background: white;
+        border: 1px solid #2563eb;
+        color: #2563eb;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .sample-button:hover {
+        background: #eff6ff;
+    }
+
+    /* ================= FLOW ================= */
+
+    .flow {
+        margin-top: 20px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 22px;
+    }
+
+    .flow-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 16px;
+    }
+
+    .flow-items {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+
+    .flow-item {
+        text-align: center;
+        padding: 13px 8px;
+        background: #f8fafc;
+        border-radius: 9px;
+        border: 1px solid #eef2f7;
+    }
+
+    .flow-number {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #2563eb;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 8px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .flow-item strong {
+        display: block;
+        font-size: 11px;
+        color: #111827;
+    }
+
+    .flow-item span {
+        display: block;
+        font-size: 10px;
+        color: #9ca3af;
+        margin-top: 3px;
+    }
+
+    /* ================= FOOTER ================= */
+
+    .footer {
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        color: #9ca3af;
+        font-size: 11px;
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 1050px) {
+
+        .main-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .flow-items {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+    @media (max-width: 700px) {
+
+        .sidebar {
+            position: static;
+            width: 100%;
+            min-height: auto;
+        }
+
+        .app-shell {
+            display: block;
+        }
+
+        .main {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .topbar {
+            padding: 0 20px;
+        }
+
+        .hero {
+            padding: 28px;
+        }
+
+        .hero h1 {
+            font-size: 25px;
+        }
+
+        .flow-items {
+            grid-template-columns: 1fr;
+        }
+
+        .footer {
+            flex-direction: column;
+            gap: 6px;
+        }
+
+    }
+
+</style>
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-title">
+            Mobility Ops<br>
+            Intelligence
+        </div>
+
+        <div class="brand-subtitle">
+            Marketplace Operations Engine
+        </div>
+
+    </div>
+
+
+    <div class="nav-label">
+        WORKSPACE
+    </div>
+
+
+    <a
+        href="{{ url_for('index') }}"
+        class="nav-link active"
+    >
+        <span class="nav-icon">⌂</span>
+        Home
+    </a>
+
+
+    <a
+        href="{{ url_for('dashboard') }}"
+        class="nav-link"
+    >
+        <span class="nav-icon">▦</span>
+        Dashboard
+    </a>
+
+
+    <a
+        href="{{ url_for('driver') }}"
+        class="nav-link"
+    >
+        <span class="nav-icon">♙</span>
+        Driver Analytics
+    </a>
+
+
+    <a
+        href="{{ url_for('zone') }}"
+        class="nav-link"
+    >
+        <span class="nav-icon">⌖</span>
+        Zone Analytics
+    </a>
+
+
+    <a
+        href="{{ url_for('operations') }}"
+        class="nav-link"
+    >
+        <span class="nav-icon">◈</span>
+        Operations
+    </a>
+
+
+    <a
+        href="{{ url_for('analytics_dashboard') }}"
+        class="nav-link"
+    >
+        <span class="nav-icon">◉</span>
+        Analytics
+    </a>
+
+
+    <div class="sidebar-footer">
+
+        <div class="environment">
+
+            Environment
+
+            <strong>
+                ● Local Operations Console
+            </strong>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+
+    <header class="topbar">
+
+        <div class="topbar-title">
+            Workspace / <strong>Data Intake</strong>
+        </div>
+
+
+        <div class="status-badge">
+
+            <span class="status-dot"></span>
+
+            Ready for Dataset
+
+        </div>
+
+    </header>
+
+
+    <div class="content">
+
+
+        <!-- ================= HERO ================= -->
+
+        <section class="hero">
+
+            <div class="hero-label">
+                MOBILITY MARKETPLACE
+            </div>
+
+            <h1>
+                Operations Intelligence Engine
+            </h1>
+
+            <p>
+                Upload mobility marketplace datasets, validate data
+                quality, and explore operational intelligence across
+                drivers, trips, zones, demand, cancellations and
+                utilization.
+            </p>
+
+        </section>
+
+
+        <!-- ================= MAIN GRID ================= -->
+
+        <div class="main-grid">
+
+
+            <!-- ================= UPLOAD ================= -->
+
+            <section class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Upload Mobility Data
+                    </h2>
+
+                    <p>
+                        Provide the three required CSV datasets to
+                        start the analysis.
+                    </p>
+
+                </div>
+
+
+                {% if error %}
+
+                    <div class="error-box">
+                        {{ error }}
+                    </div>
+
+                {% endif %}
+
+
+                <form
+                    action="{{ url_for('upload') }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+
+
+                    <div class="file-group">
+
+                        <label
+                            class="file-label"
+                            for="drivers_file"
+                        >
+                            Drivers CSV
+                            <span>
+                                Driver master data
+                            </span>
+                        </label>
+
+                        <div class="file-input-wrapper">
+
+                            <input
+                                type="file"
+                                id="drivers_file"
+                                name="drivers_file"
+                                accept=".csv"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="file-group">
+
+                        <label
+                            class="file-label"
+                            for="trips_file"
+                        >
+                            Trips CSV
+                            <span>
+                                Trip-level marketplace data
+                            </span>
+                        </label>
+
+                        <div class="file-input-wrapper">
+
+                            <input
+                                type="file"
+                                id="trips_file"
+                                name="trips_file"
+                                accept=".csv"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="file-group">
+
+                        <label
+                            class="file-label"
+                            for="activity_file"
+                        >
+                            Driver Activity CSV
+                            <span>
+                                Driver status history
+                            </span>
+                        </label>
+
+                        <div class="file-input-wrapper">
+
+                            <input
+                                type="file"
+                                id="activity_file"
+                                name="activity_file"
+                                accept=".csv"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="upload-button"
+                    >
+                        Upload and Validate Data
+                    </button>
+
+
+                </form>
+
+
+                <!-- SAMPLE DATA -->
+
+                <div class="sample-panel">
+
+                    <h3>
+                        Want to explore the application first?
+                    </h3>
+
+                    <p>
+                        Use the generated sample datasets to open the
+                        dashboard without manually selecting CSV files.
+                    </p>
+
+                    <a
+                        href="{{ url_for('dashboard') }}"
+                        class="sample-button"
+                    >
+                        Load Sample Data →
+                    </a>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- ================= REQUIREMENTS ================= -->
+
+            <section class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Dataset Requirements
+                    </h2>
+
+                    <p>
+                        The engine validates each dataset before
+                        creating the analytics layer.
+                    </p>
+
+                </div>
+
+
+                <div class="requirements">
+
+
+                    <div class="requirement">
+
+                        <div class="requirement-icon">
+                            D
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Drivers Dataset
+                            </strong>
+
+                            <span>
+                                Driver IDs, names, cities, vehicles,
+                                ratings and status.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="requirement">
+
+                        <div class="requirement-icon">
+                            T
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Trips Dataset
+                            </strong>
+
+                            <span>
+                                Trip IDs, drivers, zones, timestamps,
+                                distance, fare and status.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="requirement">
+
+                        <div class="requirement-icon">
+                            A
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Driver Activity
+                            </strong>
+
+                            <span>
+                                Driver activity timestamps and
+                                availability status.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="requirement">
+
+                        <div class="requirement-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Automatic Validation
+                            </strong>
+
+                            <span>
+                                Missing columns, invalid values,
+                                duplicates and timestamp issues
+                                are checked automatically.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+        <!-- ================= PROCESS FLOW ================= -->
+
+        <section class="flow">
+
+            <div class="flow-title">
+                Analysis Workflow
+            </div>
+
+
+            <div class="flow-items">
+
+
+                <div class="flow-item">
+
+                    <div class="flow-number">
+                        1
+                    </div>
+
+                    <strong>
+                        Upload
+                    </strong>
+
+                    <span>
+                        Load CSV datasets
+                    </span>
+
+                </div>
+
+
+                <div class="flow-item">
+
+                    <div class="flow-number">
+                        2
+                    </div>
+
+                    <strong>
+                        Validate
+                    </strong>
+
+                    <span>
+                        Check data quality
+                    </span>
+
+                </div>
+
+
+                <div class="flow-item">
+
+                    <div class="flow-number">
+                        3
+                    </div>
+
+                    <strong>
+                        Analyze
+                    </strong>
+
+                    <span>
+                        Apply analytics engine
+                    </span>
+
+                </div>
+
+
+                <div class="flow-item">
+
+                    <div class="flow-number">
+                        4
+                    </div>
+
+                    <strong>
+                        Discover
+                    </strong>
+
+                    <span>
+                        Explore insights
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= FOOTER ================= -->
+
+        <div class="footer">
+
+            <span>
+                Mobility Marketplace Operations Intelligence Engine
+            </span>
+
+            <span>
+                Local Environment · Data Intelligence Console
+            </span>
+
+        </div>
+
+
+    </div>
+
+</main>

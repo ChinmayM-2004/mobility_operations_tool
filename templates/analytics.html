@@ -1,0 +1,1261 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Advanced Analytics | Mobility Operations
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Advanced Analytics
+            </h1>
+
+            <p>
+                Mobility Marketplace Operations Intelligence Engine
+            </p>
+
+            <p>
+                Data Source:
+                <strong>{{ data_source }}</strong>
+            </p>
+
+        </div>
+
+
+        <div class="navigation">
+
+            <a href="/dashboard">
+                Dashboard
+            </a>
+
+            <a href="/analytics">
+                Advanced Analytics
+            </a>
+
+            <a href="/">
+                Upload Data
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DATA SUMMARY
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Dataset Summary
+        </h2>
+
+        <div class="kpi-grid">
+
+            <div class="kpi-card">
+
+                <h3>
+                    Drivers
+                </h3>
+
+                <p>
+                    {{ summary.drivers }}
+                </p>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <h3>
+                    Trips
+                </h3>
+
+                <p>
+                    {{ summary.trips }}
+                </p>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <h3>
+                    Zones
+                </h3>
+
+                <p>
+                    {{ summary.zones }}
+                </p>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <h3>
+                    Activity Records
+                </h3>
+
+                <p>
+                    {{ summary.activity_records }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TOP-K DRIVERS BY REVENUE
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Top 10 Drivers by Revenue
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Rank
+                    </th>
+
+                    <th>
+                        Driver ID
+                    </th>
+
+                    <th>
+                        Name
+                    </th>
+
+                    <th>
+                        City
+                    </th>
+
+                    <th>
+                        Completed Trips
+                    </th>
+
+                    <th>
+                        Revenue
+                    </th>
+
+                    <th>
+                        Cancellation Rate
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for driver in top_revenue_drivers %}
+
+                <tr>
+
+                    <td>
+                        {{ loop.index }}
+                    </td>
+
+                    <td>
+                        {{ driver.driver_id }}
+                    </td>
+
+                    <td>
+                        {{ driver.driver_name }}
+                    </td>
+
+                    <td>
+                        {{ driver.city }}
+                    </td>
+
+                    <td>
+                        {{ driver.completed_trips }}
+                    </td>
+
+                    <td>
+                        ₹{{ "%.2f"|format(driver.revenue) }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(driver.cancellation_rate) }}%
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- =====================================================
+         TOP-K DRIVERS BY COMPLETED TRIPS
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Top 10 Drivers by Completed Trips
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Rank
+                    </th>
+
+                    <th>
+                        Driver ID
+                    </th>
+
+                    <th>
+                        Name
+                    </th>
+
+                    <th>
+                        City
+                    </th>
+
+                    <th>
+                        Completed Trips
+                    </th>
+
+                    <th>
+                        Revenue
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for driver in top_completed_trip_drivers %}
+
+                <tr>
+
+                    <td>
+                        {{ loop.index }}
+                    </td>
+
+                    <td>
+                        {{ driver.driver_id }}
+                    </td>
+
+                    <td>
+                        {{ driver.driver_name }}
+                    </td>
+
+                    <td>
+                        {{ driver.city }}
+                    </td>
+
+                    <td>
+                        {{ driver.completed_trips }}
+                    </td>
+
+                    <td>
+                        ₹{{ "%.2f"|format(driver.revenue) }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- =====================================================
+         TOP-K DRIVERS BY CANCELLATION RATE
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Top 10 Drivers by Cancellation Rate
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Rank
+                    </th>
+
+                    <th>
+                        Driver ID
+                    </th>
+
+                    <th>
+                        Name
+                    </th>
+
+                    <th>
+                        City
+                    </th>
+
+                    <th>
+                        Total Trips
+                    </th>
+
+                    <th>
+                        Cancelled Trips
+                    </th>
+
+                    <th>
+                        Cancellation Rate
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for driver in top_cancellation_drivers %}
+
+                <tr>
+
+                    <td>
+                        {{ loop.index }}
+                    </td>
+
+                    <td>
+                        {{ driver.driver_id }}
+                    </td>
+
+                    <td>
+                        {{ driver.driver_name }}
+                    </td>
+
+                    <td>
+                        {{ driver.city }}
+                    </td>
+
+                    <td>
+                        {{ driver.total_trips }}
+                    </td>
+
+                    <td>
+                        {{ driver.cancelled_trips }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(driver.cancellation_rate) }}%
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- =====================================================
+         TOP-K ZONES
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Top 10 Zones by Demand
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Rank
+                    </th>
+
+                    <th>
+                        City
+                    </th>
+
+                    <th>
+                        Zone
+                    </th>
+
+                    <th>
+                        Requests
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for zone in top_zones %}
+
+                <tr>
+
+                    <td>
+                        {{ loop.index }}
+                    </td>
+
+                    <td>
+                        {{ zone.city }}
+                    </td>
+
+                    <td>
+                        {{ zone.zone }}
+                    </td>
+
+                    <td>
+                        {{ zone.requests }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- =====================================================
+         PEAK DEMAND
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Peak Demand Hours
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Rank
+                    </th>
+
+                    <th>
+                        Time
+                    </th>
+
+                    <th>
+                        Requests
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for item in peak_demand %}
+
+                <tr>
+
+                    <td>
+                        {{ loop.index }}
+                    </td>
+
+                    <td>
+                        {{ item.hour_label }}
+                    </td>
+
+                    <td>
+                        {{ item.requests }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- =====================================================
+         DRIVER UTILIZATION
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Top Driver Utilization
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Rank
+                    </th>
+
+                    <th>
+                        Driver ID
+                    </th>
+
+                    <th>
+                        Name
+                    </th>
+
+                    <th>
+                        City
+                    </th>
+
+                    <th>
+                        Online Minutes
+                    </th>
+
+                    <th>
+                        Busy Minutes
+                    </th>
+
+                    <th>
+                        Utilization
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for driver in driver_utilization %}
+
+                <tr>
+
+                    <td>
+                        {{ loop.index }}
+                    </td>
+
+                    <td>
+                        {{ driver.driver_id }}
+                    </td>
+
+                    <td>
+                        {{ driver.driver_name }}
+                    </td>
+
+                    <td>
+                        {{ driver.city }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(driver.online_minutes) }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(driver.busy_minutes) }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(driver.utilization) }}%
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- =====================================================
+         IDLE TIME
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Idle Time Analysis
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Driver ID
+                    </th>
+
+                    <th>
+                        Driver Name
+                    </th>
+
+                    <th>
+                        Start Time
+                    </th>
+
+                    <th>
+                        End Time
+                    </th>
+
+                    <th>
+                        Idle Minutes
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for idle in idle_time[:20] %}
+
+                <tr>
+
+                    <td>
+                        {{ idle.driver_id }}
+                    </td>
+
+                    <td>
+                        {{ idle.driver_name }}
+                    </td>
+
+                    <td>
+                        {{ idle.start_time }}
+                    </td>
+
+                    <td>
+                        {{ idle.end_time }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(idle.idle_minutes) }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        <p class="section-note">
+            Showing the first 20 detected idle periods.
+        </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         CONSECUTIVE TRIPS
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Consecutive Trip Analysis
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Driver ID
+                    </th>
+
+                    <th>
+                        Driver Name
+                    </th>
+
+                    <th>
+                        Starting Trip
+                    </th>
+
+                    <th>
+                        Ending Trip
+                    </th>
+
+                    <th>
+                        Sequence Length
+                    </th>
+
+                    <th>
+                        Start Time
+                    </th>
+
+                    <th>
+                        End Time
+                    </th>
+
+                    <th>
+                        Turnaround Minutes
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for sequence in consecutive_trips[:20] %}
+
+                <tr>
+
+                    <td>
+                        {{ sequence.driver_id }}
+                    </td>
+
+                    <td>
+                        {{ sequence.driver_name }}
+                    </td>
+
+                    <td>
+                        {{ sequence.sequence_start_trip }}
+                    </td>
+
+                    <td>
+                        {{ sequence.sequence_end_trip }}
+                    </td>
+
+                    <td>
+                        {{ sequence.sequence_length }}
+                    </td>
+
+                    <td>
+                        {{ sequence.start_time }}
+                    </td>
+
+                    <td>
+                        {{ sequence.end_time }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(sequence.total_turnaround_minutes) }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        <p class="section-note">
+            Showing the first 20 detected consecutive-trip sequences.
+        </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         CANCELLATION INTELLIGENCE
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Cancellation Intelligence
+        </h2>
+
+
+        <div class="kpi-grid">
+
+            <div class="kpi-card">
+
+                <h3>
+                    Total Trips
+                </h3>
+
+                <p>
+                    {{ cancellation_intelligence.total_trips }}
+                </p>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <h3>
+                    Cancelled Trips
+                </h3>
+
+                <p>
+                    {{ cancellation_intelligence.cancelled_trips }}
+                </p>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <h3>
+                    Cancellation Rate
+                </h3>
+
+                <p>
+                    {{
+                        "%.2f"|format(
+                            cancellation_intelligence.overall_rate
+                        )
+                    }}%
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Cancellation by Reason -->
+
+        <h3>
+            Cancellation by Reason
+        </h3>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Reason
+                    </th>
+
+                    <th>
+                        Cancelled Trips
+                    </th>
+
+                    <th>
+                        Percentage
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for item in cancellation_intelligence.by_reason %}
+
+                <tr>
+
+                    <td>
+                        {{ item.reason }}
+                    </td>
+
+                    <td>
+                        {{ item.cancelled_trips }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(item.percentage) }}%
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        <!-- Cancellation by City -->
+
+        <h3>
+            Cancellation by City
+        </h3>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        City
+                    </th>
+
+                    <th>
+                        Total Trips
+                    </th>
+
+                    <th>
+                        Cancelled Trips
+                    </th>
+
+                    <th>
+                        Cancellation Rate
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for item in cancellation_intelligence.by_city %}
+
+                <tr>
+
+                    <td>
+                        {{ item.city }}
+                    </td>
+
+                    <td>
+                        {{ item.total_trips }}
+                    </td>
+
+                    <td>
+                        {{ item.cancelled_trips }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(item.cancellation_rate) }}%
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        <!-- Cancellation by Zone -->
+
+        <h3>
+            Cancellation by Zone
+        </h3>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        City
+                    </th>
+
+                    <th>
+                        Zone
+                    </th>
+
+                    <th>
+                        Total Trips
+                    </th>
+
+                    <th>
+                        Cancelled Trips
+                    </th>
+
+                    <th>
+                        Cancellation Rate
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for item in cancellation_intelligence.by_zone[:20] %}
+
+                <tr>
+
+                    <td>
+                        {{ item.city }}
+                    </td>
+
+                    <td>
+                        {{ item.zone }}
+                    </td>
+
+                    <td>
+                        {{ item.total_trips }}
+                    </td>
+
+                    <td>
+                        {{ item.cancelled_trips }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(item.cancellation_rate) }}%
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        <p class="section-note">
+            Showing the first 20 zones by cancellation rate.
+        </p>
+
+
+        <!-- Cancellation by Driver -->
+
+        <h3>
+            Cancellation by Driver
+        </h3>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Driver ID
+                    </th>
+
+                    <th>
+                        Driver Name
+                    </th>
+
+                    <th>
+                        City
+                    </th>
+
+                    <th>
+                        Total Trips
+                    </th>
+
+                    <th>
+                        Cancelled Trips
+                    </th>
+
+                    <th>
+                        Cancellation Rate
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for item in cancellation_intelligence.by_driver[:20] %}
+
+                <tr>
+
+                    <td>
+                        {{ item.driver_id }}
+                    </td>
+
+                    <td>
+                        {{ item.driver_name }}
+                    </td>
+
+                    <td>
+                        {{ item.city }}
+                    </td>
+
+                    <td>
+                        {{ item.total_trips }}
+                    </td>
+
+                    <td>
+                        {{ item.cancelled_trips }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(item.cancellation_rate) }}%
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        <p class="section-note">
+            Showing the first 20 drivers by cancellation rate.
+        </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         VALIDATION STATUS
+         ===================================================== -->
+
+    <section>
+
+        <h2>
+            Data Validation
+        </h2>
+
+        <p>
+
+            Validation status:
+
+            <strong>
+
+                {% if validation.valid %}
+
+                    Valid
+
+                {% else %}
+
+                    Invalid
+
+                {% endif %}
+
+            </strong>
+
+        </p>
+
+
+        <p>
+            Errors:
+            {{ validation.error_count }}
+        </p>
+
+
+        <p>
+            Warnings:
+            {{ validation.warning_count }}
+        </p>
+
+
+        {% if validation.errors %}
+
+            <h3>
+                Validation Errors
+            </h3>
+
+            <ul>
+
+                {% for error in validation.errors[:20] %}
+
+                <li>
+                    {{ error }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <footer>
+
+        <p>
+            Mobility Marketplace Operations Intelligence Engine
+        </p>
+
+        <p>
+            Day 3 — DSA + Advanced Analytics
+        </p>
+
+    </footer>
+
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,1443 @@
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Dashboard | Mobility Operations</title>
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+>
+
+<style>
+    /* =====================================================
+       DASHBOARD LAYOUT
+       ===================================================== */
+
+    .app-shell {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 250px;
+        padding: 24px 16px;
+        background: var(--sidebar);
+        color: white;
+        overflow-y: auto;
+        z-index: 100;
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 10px 28px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .brand-mark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        background: var(--primary);
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .brand-text strong {
+        display: block;
+        color: white;
+        font-size: 14px;
+        font-weight: 750;
+    }
+
+    .brand-text span {
+        display: block;
+        margin-top: 2px;
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+    .nav-section {
+        margin-top: 28px;
+    }
+
+    .nav-label {
+        padding: 0 12px 9px;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .side-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .side-nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 12px;
+        border-radius: 8px;
+        color: #cbd5e1;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition:
+            background 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .side-nav a:hover {
+        background: var(--sidebar-hover);
+        color: white;
+    }
+
+    .side-nav a.active {
+        background: var(--sidebar-active);
+        color: white;
+        box-shadow:
+            0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .nav-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        font-size: 14px;
+    }
+
+    .sidebar-footer {
+        margin-top: 35px;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 10px;
+    }
+
+    .sidebar-footer span {
+        display: block;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .sidebar-footer strong {
+        display: block;
+        margin-top: 5px;
+        color: #e2e8f0;
+        font-size: 12px;
+    }
+
+
+    /* =====================================================
+       MAIN CONTENT
+       ===================================================== */
+
+    .main-content {
+        width: calc(100% - 250px);
+        margin-left: 250px;
+        min-height: 100vh;
+        background: var(--bg);
+    }
+
+    .dashboard-container {
+        width: min(1380px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 30px 0 50px;
+    }
+
+
+    /* =====================================================
+       TOP BAR
+       ===================================================== */
+
+    .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 26px;
+    }
+
+    .topbar-title h1 {
+        margin: 0;
+        color: var(--text);
+        font-size: 26px;
+        font-weight: 760;
+        letter-spacing: -0.5px;
+    }
+
+    .topbar-title p {
+        margin: 5px 0 0;
+        color: var(--text-secondary);
+        font-size: 13px;
+    }
+
+    .topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .source-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 650;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .source-dot {
+        width: 7px;
+        height: 7px;
+        background: var(--success);
+        border-radius: 50%;
+    }
+
+
+    /* =====================================================
+       KPI CARDS
+       ===================================================== */
+
+    .dashboard-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .dashboard-kpi {
+        position: relative;
+        padding: 21px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .dashboard-kpi::after {
+        content: "";
+        position: absolute;
+        right: -25px;
+        top: -25px;
+        width: 90px;
+        height: 90px;
+        background: var(--primary-soft);
+        border-radius: 50%;
+    }
+
+    .kpi-label {
+        position: relative;
+        z-index: 1;
+        color: var(--text-secondary);
+        font-size: 11px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+    }
+
+    .kpi-value {
+        position: relative;
+        z-index: 1;
+        margin-top: 8px;
+        color: var(--text);
+        font-size: 29px;
+        font-weight: 780;
+        line-height: 1.15;
+    }
+
+    .kpi-subtitle {
+        position: relative;
+        z-index: 1;
+        margin-top: 7px;
+        color: var(--text-muted);
+        font-size: 11px;
+    }
+
+
+    /* =====================================================
+       DASHBOARD GRID
+       ===================================================== */
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .dashboard-card {
+        padding: 22px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 18px;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        color: var(--text);
+        font-size: 16px;
+        font-weight: 730;
+    }
+
+    .card-header span {
+        color: var(--text-muted);
+        font-size: 11px;
+    }
+
+
+    /* =====================================================
+       STATUS BREAKDOWN
+       ===================================================== */
+
+    .status-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .status-row {
+        display: grid;
+        grid-template-columns: 110px 1fr 60px;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .status-name {
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .status-bar {
+        height: 8px;
+        background: #eef2f7;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .status-fill {
+        height: 100%;
+        background: var(--primary);
+        border-radius: inherit;
+        min-width: 2px;
+    }
+
+    .status-count {
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 750;
+        text-align: right;
+    }
+
+
+    /* =====================================================
+       CANCELLATION LIST
+       ===================================================== */
+
+    .cancel-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .cancel-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        background: var(--surface-soft);
+        border: 1px solid #edf1f5;
+        border-radius: 9px;
+    }
+
+    .cancel-name {
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .cancel-value {
+        color: var(--danger);
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+
+    /* =====================================================
+       TABLE CARD
+       ===================================================== */
+
+    .table-card {
+        padding: 22px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .table-card .table-wrapper {
+        margin-top: 0;
+    }
+
+
+    /* =====================================================
+       VALIDATION
+       ===================================================== */
+
+    .validation-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 18px 20px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .validation-title {
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .validation-meta {
+        margin-top: 3px;
+        color: var(--text-muted);
+        font-size: 11px;
+    }
+
+    .validation-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 11px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .validation-status.valid {
+        background: var(--success-soft);
+        color: var(--success);
+    }
+
+    .validation-status.invalid {
+        background: var(--danger-soft);
+        color: var(--danger);
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1150px) {
+
+        .dashboard-kpis {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 800px) {
+
+        .sidebar {
+            position: static;
+            width: 100%;
+            min-height: auto;
+        }
+
+        .app-shell {
+            display: block;
+        }
+
+        .main-content {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        .dashboard-container {
+            width: min(100% - 24px, 1380px);
+            padding-top: 20px;
+        }
+
+        .side-nav {
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .side-nav a {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .sidebar-footer {
+            display: none;
+        }
+
+        .topbar {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 600px) {
+
+        .dashboard-kpis {
+            grid-template-columns: 1fr;
+        }
+
+        .status-row {
+            grid-template-columns: 90px 1fr 45px;
+        }
+
+        .validation-card {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<!-- =====================================================
+     SIDEBAR
+     ===================================================== -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-mark">
+            M
+        </div>
+
+        <div class="brand-text">
+
+            <strong>
+                Mobility Ops
+            </strong>
+
+            <span>
+                Intelligence Engine
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="nav-section">
+
+        <div class="nav-label">
+            Workspace
+        </div>
+
+        <nav class="side-nav">
+
+            <a
+                href="/dashboard"
+                class="active"
+            >
+                <span class="nav-icon">
+                    ▣
+                </span>
+
+                Dashboard
+            </a>
+
+
+            <a href="/analytics">
+
+                <span class="nav-icon">
+                    ◫
+                </span>
+
+                Advanced Analytics
+
+            </a>
+
+
+            <a href="/operations">
+
+                <span class="nav-icon">
+                    ⚡
+                </span>
+
+                Operations
+
+            </a>
+
+        </nav>
+
+    </div>
+
+
+    <div class="nav-section">
+
+        <div class="nav-label">
+            Search
+        </div>
+
+        <nav class="side-nav">
+
+            <a href="/search">
+
+                <span class="nav-icon">
+                    ⌕
+                </span>
+
+                Search Data
+
+            </a>
+
+
+            <a href="/driver">
+
+                <span class="nav-icon">
+                    ◉
+                </span>
+
+                Driver Analysis
+
+            </a>
+
+
+            <a href="/zone">
+
+                <span class="nav-icon">
+                    ◇
+                </span>
+
+                Zone Analysis
+
+            </a>
+
+        </nav>
+
+    </div>
+
+
+    <div class="nav-section">
+
+        <div class="nav-label">
+            Data
+        </div>
+
+        <nav class="side-nav">
+
+            <a href="/">
+
+                <span class="nav-icon">
+                    ↑
+                </span>
+
+                Upload Dataset
+
+            </a>
+
+        </nav>
+
+    </div>
+
+
+    <div class="sidebar-footer">
+
+        <span>
+            Environment
+        </span>
+
+        <strong>
+            Local Operations Console
+        </strong>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+     ===================================================== -->
+
+<main class="main-content">
+
+    <div class="dashboard-container">
+
+
+        <!-- =================================================
+             TOP BAR
+             ================================================= -->
+
+        <header class="topbar">
+
+            <div class="topbar-title">
+
+                <h1>
+                    Operations Overview
+                </h1>
+
+                <p>
+                    Monitor marketplace performance, demand and driver operations.
+                </p>
+
+            </div>
+
+
+            <div class="topbar-actions">
+
+                <div class="source-badge">
+
+                    <span class="source-dot"></span>
+
+                    {{ data_source }}
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             PRIMARY KPI CARDS
+             ================================================= -->
+
+        <div class="dashboard-kpis">
+
+            <div class="dashboard-kpi">
+
+                <div class="kpi-label">
+                    Total Drivers
+                </div>
+
+                <div class="kpi-value">
+                    {{ kpis.total_drivers }}
+                </div>
+
+                <div class="kpi-subtitle">
+                    {{ kpis.active_drivers }} currently active
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-kpi">
+
+                <div class="kpi-label">
+                    Total Trips
+                </div>
+
+                <div class="kpi-value">
+                    {{ kpis.total_trips }}
+                </div>
+
+                <div class="kpi-subtitle">
+                    {{ kpis.completed_trips }} completed trips
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-kpi">
+
+                <div class="kpi-label">
+                    Revenue
+                </div>
+
+                <div class="kpi-value">
+                    ₹{{ "%.0f"|format(kpis.total_revenue) }}
+                </div>
+
+                <div class="kpi-subtitle">
+                    Average fare ₹{{ "%.2f"|format(kpis.average_fare) }}
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-kpi">
+
+                <div class="kpi-label">
+                    Cancellation Rate
+                </div>
+
+                <div class="kpi-value">
+                    {{ "%.2f"|format(kpis.cancellation_rate) }}%
+                </div>
+
+                <div class="kpi-subtitle">
+                    {{ kpis.cancelled_trips }} cancelled trips
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SECONDARY KPI CARDS
+             ================================================= -->
+
+        <div class="dashboard-kpis">
+
+            <div class="dashboard-kpi">
+
+                <div class="kpi-label">
+                    Completion Rate
+                </div>
+
+                <div class="kpi-value">
+                    {{ "%.2f"|format(kpis.completion_rate) }}%
+                </div>
+
+                <div class="kpi-subtitle">
+                    Marketplace fulfillment
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-kpi">
+
+                <div class="kpi-label">
+                    Average Distance
+                </div>
+
+                <div class="kpi-value">
+                    {{ "%.2f"|format(kpis.average_distance) }}
+                </div>
+
+                <div class="kpi-subtitle">
+                    Kilometers per trip
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-kpi">
+
+                <div class="kpi-label">
+                    Average Duration
+                </div>
+
+                <div class="kpi-value">
+                    {{ "%.2f"|format(kpis.average_trip_duration) }}
+                </div>
+
+                <div class="kpi-subtitle">
+                    Minutes per completed trip
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-kpi">
+
+                <div class="kpi-label">
+                    Riders
+                </div>
+
+                <div class="kpi-value">
+                    {{ kpis.total_riders }}
+                </div>
+
+                <div class="kpi-subtitle">
+                    Unique riders served
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             STATUS + CANCELLATIONS
+             ================================================= -->
+
+        <div class="dashboard-grid">
+
+
+            <!-- TRIP STATUS -->
+
+            <div class="dashboard-card">
+
+                <div class="card-header">
+
+                    <h2>
+                        Trip Status
+                    </h2>
+
+                    <span>
+                        {{ kpis.total_trips }} total trips
+                    </span>
+
+                </div>
+
+
+                <div class="status-list">
+
+                    {% for status, count in trip_status_counts.items() %}
+
+                    <div class="status-row">
+
+                        <div class="status-name">
+                            {{ status }}
+                        </div>
+
+
+                        <div class="status-bar">
+
+                            <div class="progress-bar">
+                                <div class="progress-fill"
+                                     data-width="{{ status_width }}">
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="status-count">
+                            {{ count }}
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- CANCELLATIONS -->
+
+            <div class="dashboard-card">
+
+                <div class="card-header">
+
+                    <h2>
+                        Cancellation Reasons
+                    </h2>
+
+                    <span>
+                        Breakdown
+                    </span>
+
+                </div>
+
+
+                <div class="cancel-list">
+
+                    {% for reason, count in cancellation_reasons.items() %}
+
+                    <div class="cancel-row">
+
+                        <span class="cancel-name">
+                            {{ reason }}
+                        </span>
+
+                        <span class="cancel-value">
+                            {{ count }}
+                        </span>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TOP DRIVERS
+             ================================================= -->
+
+        <div class="dashboard-grid">
+
+
+            <!-- REVENUE -->
+
+            <div class="table-card">
+
+                <div class="card-header">
+
+                    <h2>
+                        Top Drivers by Revenue
+                    </h2>
+
+                    <span>
+                        Top 5
+                    </span>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Rank
+                                </th>
+
+                                <th>
+                                    Driver
+                                </th>
+
+                                <th>
+                                    City
+                                </th>
+
+                                <th>
+                                    Trips
+                                </th>
+
+                                <th>
+                                    Revenue
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for driver in top_revenue_drivers %}
+
+                            <tr>
+
+                                <td>
+                                    #{{ loop.index }}
+                                </td>
+
+                                <td>
+
+                                    <strong>
+                                        {{ driver.driver_name }}
+                                    </strong>
+
+                                    <br>
+
+                                    <span
+                                        style="
+                                            color: var(--text-muted);
+                                            font-size: 11px;
+                                        "
+                                    >
+                                        {{ driver.driver_id }}
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    {{ driver.city }}
+                                </td>
+
+                                <td>
+                                    {{ driver.completed_trips }}
+                                </td>
+
+                                <td>
+
+                                    <strong>
+                                        ₹{{ "%.0f"|format(driver.revenue) }}
+                                    </strong>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- COMPLETED TRIPS -->
+
+            <div class="table-card">
+
+                <div class="card-header">
+
+                    <h2>
+                        Top Drivers by Trips
+                    </h2>
+
+                    <span>
+                        Top 5
+                    </span>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Rank
+                                </th>
+
+                                <th>
+                                    Driver
+                                </th>
+
+                                <th>
+                                    City
+                                </th>
+
+                                <th>
+                                    Completed
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for driver in top_trip_drivers %}
+
+                            <tr>
+
+                                <td>
+                                    #{{ loop.index }}
+                                </td>
+
+                                <td>
+
+                                    <strong>
+                                        {{ driver.driver_name }}
+                                    </strong>
+
+                                    <br>
+
+                                    <span
+                                        style="
+                                            color: var(--text-muted);
+                                            font-size: 11px;
+                                        "
+                                    >
+                                        {{ driver.driver_id }}
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    {{ driver.city }}
+                                </td>
+
+                                <td>
+
+                                    <strong>
+                                        {{ driver.completed_trips }}
+                                    </strong>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ZONE DEMAND
+             ================================================= -->
+
+        <div
+            class="table-card"
+            style="margin-bottom: 20px;"
+        >
+
+            <div class="card-header">
+
+                <h2>
+                    Zone Demand
+                </h2>
+
+                <span>
+                    Highest request volumes
+                </span>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Rank
+                            </th>
+
+                            <th>
+                                City
+                            </th>
+
+                            <th>
+                                Zone
+                            </th>
+
+                            <th>
+                                Requests
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for zone in zone_demand[:10] %}
+
+                        <tr>
+
+                            <td>
+                                #{{ loop.index }}
+                            </td>
+
+                            <td>
+                                {{ zone.city }}
+                            </td>
+
+                            <td>
+
+                                <strong>
+                                    {{ zone.zone }}
+                                </strong>
+
+                            </td>
+
+                            <td>
+                                {{ zone.requests }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             DATASET SUMMARY
+             ================================================= -->
+
+        <div
+            class="dashboard-card"
+            style="margin-bottom: 20px;"
+        >
+
+            <div class="card-header">
+
+                <h2>
+                    Dataset
+                </h2>
+
+                <span>
+                    Current loaded records
+                </span>
+
+            </div>
+
+
+            <div class="result-grid">
+
+                <div class="result-item">
+
+                    <span class="label">
+                        Drivers
+                    </span>
+
+                    <span class="value">
+                        {{ summary.drivers }}
+                    </span>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span class="label">
+                        Trips
+                    </span>
+
+                    <span class="value">
+                        {{ summary.trips }}
+                    </span>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span class="label">
+                        Zones
+                    </span>
+
+                    <span class="value">
+                        {{ summary.zones }}
+                    </span>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span class="label">
+                        Activity Records
+                    </span>
+
+                    <span class="value">
+                        {{ summary.activity_records }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             VALIDATION
+             ================================================= -->
+
+        <div class="validation-card">
+
+            <div>
+
+                <div class="validation-title">
+                    Data Validation
+                </div>
+
+                <div class="validation-meta">
+
+                    {{ validation.error_count }} errors ·
+                    {{ validation.warning_count }} warnings
+
+                </div>
+
+            </div>
+
+
+            {% if validation.valid %}
+
+            <div class="validation-status valid">
+
+                ●
+                Validation Passed
+
+            </div>
+
+            {% else %}
+
+            <div class="validation-status invalid">
+
+                ●
+                Validation Failed
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer>
+
+            <p>
+                Mobility Marketplace Operations Intelligence Engine
+            </p>
+
+            <p>
+                Operations Intelligence Console · Local Environment
+            </p>
+
+        </footer>
+
+
+    </div>
+
+</main>

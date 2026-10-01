@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zone Analytics | Mobility Ops Intelligence</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        .zone-page {
+            min-height: 100vh;
+            display: flex;
+            background: #f5f7fb;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .zone-sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: #101828;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .zone-brand {
+            padding: 26px 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .zone-brand-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 17px;
+        }
+
+        .zone-brand-title {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .zone-brand-subtitle {
+            font-size: 11px;
+            color: #98a2b3;
+            margin-top: 3px;
+        }
+
+        .zone-nav {
+            padding: 24px 14px;
+            flex: 1;
+        }
+
+        .zone-nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #667085;
+            letter-spacing: 1.3px;
+            padding: 0 12px 10px;
+        }
+
+        .zone-nav a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 11px 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            color: #b8c0cc;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.2s ease;
+        }
+
+        .zone-nav a:hover {
+            background: rgba(255,255,255,0.06);
+            color: #ffffff;
+        }
+
+        .zone-nav a.active {
+            background: rgba(79,70,229,0.18);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .zone-nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .zone-sidebar-footer {
+            padding: 18px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .zone-environment {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: #98a2b3;
+        }
+
+        .zone-status-dot {
+            width: 7px;
+            height: 7px;
+            background: #12b76a;
+            border-radius: 50%;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .zone-main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+        }
+
+        .zone-topbar {
+            height: 76px;
+            background: #ffffff;
+            border-bottom: 1px solid #eaecf0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 34px;
+        }
+
+        .zone-page-title {
+            font-size: 21px;
+            font-weight: 700;
+            margin: 0;
+            color: #101828;
+        }
+
+        .zone-page-subtitle {
+            font-size: 12px;
+            color: #667085;
+            margin-top: 4px;
+        }
+
+        .zone-topbar-badge {
+            padding: 7px 12px;
+            background: #f2f4f7;
+            color: #475467;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .zone-content {
+            padding: 30px 34px 45px;
+            max-width: 1450px;
+        }
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        .zone-search-card {
+            background: #ffffff;
+            border: 1px solid #eaecf0;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(16,24,40,0.03);
+        }
+
+        .zone-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #101828;
+            margin: 0 0 5px;
+        }
+
+        .zone-section-description {
+            font-size: 12px;
+            color: #667085;
+            margin: 0 0 18px;
+        }
+
+        .zone-search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .zone-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .zone-form-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #344054;
+        }
+
+        .zone-form-input,
+        .zone-form-select {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 13px;
+            color: #101828;
+            background: #ffffff;
+            outline: none;
+        }
+
+        .zone-form-input:focus,
+        .zone-form-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.10);
+        }
+
+        .zone-search-button {
+            height: 42px;
+            padding: 0 22px;
+            border: none;
+            border-radius: 8px;
+            background: #4f46e5;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .zone-search-button:hover {
+            background: #4338ca;
+        }
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+
+        .zone-empty {
+            background: #ffffff;
+            border: 1px solid #eaecf0;
+            border-radius: 14px;
+            padding: 70px 30px;
+            text-align: center;
+        }
+
+        .zone-empty-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 18px;
+            border-radius: 14px;
+            background: #eef2ff;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+
+        .zone-empty h2 {
+            font-size: 18px;
+            margin: 0 0 7px;
+            color: #101828;
+        }
+
+        .zone-empty p {
+            max-width: 460px;
+            margin: 0 auto;
+            color: #667085;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           KPI CARDS
+        ========================= */
+
+        .zone-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .zone-kpi {
+            background: #ffffff;
+            border: 1px solid #eaecf0;
+            border-radius: 13px;
+            padding: 19px;
+            box-shadow: 0 2px 8px rgba(16,24,40,0.03);
+        }
+
+        .zone-kpi-label {
+            color: #667085;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .zone-kpi-value {
+            margin-top: 8px;
+            font-size: 25px;
+            font-weight: 750;
+            color: #101828;
+        }
+
+        .zone-kpi-note {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #98a2b3;
+        }
+
+        /* =========================
+           CONTENT GRID
+        ========================= */
+
+        .zone-content-grid {
+            display: grid;
+            grid-template-columns: 1.45fr 1fr;
+            gap: 20px;
+        }
+
+        .zone-card {
+            background: #ffffff;
+            border: 1px solid #eaecf0;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 2px 8px rgba(16,24,40,0.03);
+        }
+
+        .zone-card-header {
+            margin-bottom: 20px;
+        }
+
+        .zone-card-title {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: #101828;
+        }
+
+        .zone-card-subtitle {
+            margin: 5px 0 0;
+            font-size: 11px;
+            color: #667085;
+        }
+
+        /* =========================
+           METRICS
+        ========================= */
+
+        .zone-metric-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 0;
+            border-bottom: 1px solid #f2f4f7;
+        }
+
+        .zone-metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .zone-metric-name {
+            color: #667085;
+            font-size: 12px;
+        }
+
+        .zone-metric-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: #101828;
+        }
+
+        /* =========================
+           PROGRESS
+        ========================= */
+
+        .zone-progress-section {
+            margin-top: 22px;
+        }
+
+        .zone-progress-item {
+            margin-bottom: 18px;
+        }
+
+        .zone-progress-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 7px;
+        }
+
+        .zone-progress-label {
+            font-size: 12px;
+            color: #475467;
+            font-weight: 600;
+        }
+
+        .zone-progress-value {
+            font-size: 12px;
+            color: #101828;
+            font-weight: 700;
+        }
+
+        .zone-progress-track {
+            width: 100%;
+            height: 8px;
+            background: #eaecf0;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .zone-progress-fill {
+            height: 100%;
+            border-radius: 20px;
+            width: 0;
+            transition: width 0.6s ease;
+        }
+
+        .zone-completion {
+            background: #12b76a;
+        }
+
+        .zone-cancellation {
+            background: #f04438;
+        }
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .zone-status-box {
+            margin-top: 22px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8f9fc;
+            border: 1px solid #eaecf0;
+        }
+
+        .zone-status-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #667085;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .zone-status-message {
+            font-size: 13px;
+            font-weight: 600;
+            color: #101828;
+        }
+
+        .zone-good {
+            color: #039855;
+        }
+
+        .zone-warning {
+            color: #dc6803;
+        }
+
+        .zone-danger {
+            color: #d92d20;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+            .zone-kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .zone-content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .zone-sidebar {
+                width: 210px;
+            }
+
+            .zone-main {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+            }
+
+            .zone-search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .zone-content {
+                padding: 22px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .zone-sidebar {
+                display: none;
+            }
+
+            .zone-main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .zone-kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .zone-topbar {
+                padding: 0 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="zone-page">
+
+    <!-- SIDEBAR -->
+    <aside class="zone-sidebar">
+
+        <div class="zone-brand">
+            <div class="zone-brand-mark">M</div>
+
+            <div>
+                <div class="zone-brand-title">
+                    Mobility Ops
+                </div>
+
+                <div class="zone-brand-subtitle">
+                    Intelligence Engine
+                </div>
+            </div>
+        </div>
+
+        <nav class="zone-nav">
+
+            <div class="zone-nav-label">
+                WORKSPACE
+            </div>
+
+            <a href="{{ url_for('dashboard') }}">
+                <span class="zone-nav-icon">▦</span>
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('driver') }}">
+                <span class="zone-nav-icon">♙</span>
+                Driver Analytics
+            </a>
+
+            <a href="{{ url_for('zone') }}" class="active">
+                <span class="zone-nav-icon">⌖</span>
+                Zone Analytics
+            </a>
+
+            <a href="{{ url_for('operations') }}">
+                <span class="zone-nav-icon">◈</span>
+                Operations
+            </a>
+
+            <a href="{{ url_for('analytics_dashboard') }}">
+                <span class="zone-nav-icon">◫</span>
+                Advanced Analytics
+            </a>
+
+        </nav>
+
+        <div class="zone-sidebar-footer">
+            <div class="zone-environment">
+                <span class="zone-status-dot"></span>
+                Local Environment
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="zone-main">
+
+        <header class="zone-topbar">
+
+            <div>
+                <h1 class="zone-page-title">
+                    Zone Analytics
+                </h1>
+
+                <div class="zone-page-subtitle">
+                    Analyze demand, revenue and cancellation performance by zone
+                </div>
+            </div>
+
+            <div class="zone-topbar-badge">
+                Operations Intelligence Console
+            </div>
+
+        </header>
+
+        <section class="zone-content">
+
+            <!-- SEARCH -->
+            <div class="zone-search-card">
+
+                <h2 class="zone-section-title">
+                    Analyze a Zone
+                </h2>
+
+                <p class="zone-section-description">
+                    Select a city and zone to view detailed marketplace performance.
+                </p>
+
+                <form method="GET" action="{{ url_for('zone') }}" class="zone-search-form">
+
+                    <div class="zone-form-group">
+
+                        <label class="zone-form-label">
+                            City
+                        </label>
+
+                        <select
+                            name="city"
+                            class="zone-form-select"
+                            required
+                        >
+                            <option value="">Select city</option>
+
+                            <option value="Bangalore"
+                                {% if city == "Bangalore" %}selected{% endif %}>
+                                Bangalore
+                            </option>
+
+                            <option value="Mumbai"
+                                {% if city == "Mumbai" %}selected{% endif %}>
+                                Mumbai
+                            </option>
+
+                            <option value="Delhi"
+                                {% if city == "Delhi" %}selected{% endif %}>
+                                Delhi
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <div class="zone-form-group">
+
+                        <label class="zone-form-label">
+                            Zone
+                        </label>
+
+                        <input
+                            type="text"
+                            name="zone"
+                            class="zone-form-input"
+                            placeholder="e.g. Connaught Place"
+                            value="{{ zone_name or '' }}"
+                            required
+                        >
+
+                    </div>
+
+                    <button type="submit" class="zone-search-button">
+                        Analyze Zone
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            {% if performance %}
+
+            <!-- KPI CARDS -->
+            <div class="zone-kpi-grid">
+
+                <div class="zone-kpi">
+                    <div class="zone-kpi-label">
+                        Total Requests
+                    </div>
+
+                    <div class="zone-kpi-value">
+                        {{ performance.requests }}
+                    </div>
+
+                    <div class="zone-kpi-note">
+                        Trips requested in this zone
+                    </div>
+                </div>
+
+
+                <div class="zone-kpi">
+                    <div class="zone-kpi-label">
+                        Completed Trips
+                    </div>
+
+                    <div class="zone-kpi-value">
+                        {{ performance.completed_trips }}
+                    </div>
+
+                    <div class="zone-kpi-note">
+                        Successfully completed
+                    </div>
+                </div>
+
+
+                <div class="zone-kpi">
+                    <div class="zone-kpi-label">
+                        Revenue
+                    </div>
+
+                    <div class="zone-kpi-value">
+                        ₹{{ "{:,.0f}".format(performance.revenue) }}
+                    </div>
+
+                    <div class="zone-kpi-note">
+                        Total generated revenue
+                    </div>
+                </div>
+
+
+                <div class="zone-kpi">
+                    <div class="zone-kpi-label">
+                        Avg Fare
+                    </div>
+
+                    <div class="zone-kpi-value">
+                        ₹{{ "{:,.2f}".format(performance.average_fare) }}
+                    </div>
+
+                    <div class="zone-kpi-note">
+                        Average fare per trip
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- MAIN ANALYTICS -->
+            <div class="zone-content-grid">
+
+                <!-- PERFORMANCE -->
+                <div class="zone-card">
+
+                    <div class="zone-card-header">
+
+                        <h2 class="zone-card-title">
+                            Zone Performance
+                        </h2>
+
+                        <p class="zone-card-subtitle">
+                            {{ city }} · {{ zone_name }}
+                        </p>
+
+                    </div>
+
+
+                    <div class="zone-metric-row">
+                        <span class="zone-metric-name">
+                            Total Requests
+                        </span>
+
+                        <span class="zone-metric-value">
+                            {{ performance.requests }}
+                        </span>
+                    </div>
+
+
+                    <div class="zone-metric-row">
+                        <span class="zone-metric-name">
+                            Completed Trips
+                        </span>
+
+                        <span class="zone-metric-value">
+                            {{ performance.completed_trips }}
+                        </span>
+                    </div>
+
+
+                    <div class="zone-metric-row">
+                        <span class="zone-metric-name">
+                            Cancelled Trips
+                        </span>
+
+                        <span class="zone-metric-value">
+                            {{ performance.cancelled_trips }}
+                        </span>
+                    </div>
+
+
+                    <div class="zone-metric-row">
+                        <span class="zone-metric-name">
+                            Revenue
+                        </span>
+
+                        <span class="zone-metric-value">
+                            ₹{{ "{:,.2f}".format(performance.revenue) }}
+                        </span>
+                    </div>
+
+
+                    <div class="zone-metric-row">
+                        <span class="zone-metric-name">
+                            Average Fare
+                        </span>
+
+                        <span class="zone-metric-value">
+                            ₹{{ "{:,.2f}".format(performance.average_fare) }}
+                        </span>
+                    </div>
+
+
+                    <div class="zone-progress-section">
+
+                        <div class="zone-progress-item">
+
+                            <div class="zone-progress-top">
+
+                                <span class="zone-progress-label">
+                                    Completion Rate
+                                </span>
+
+                                <span class="zone-progress-value">
+                                    {{ performance.completion_rate }}%
+                                </span>
+
+                            </div>
+
+                            <div class="zone-progress-track">
+
+                                <div
+                                    class="zone-progress-fill zone-completion"
+                                    data-width="{{ performance.completion_rate }}"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="zone-progress-item">
+
+                            <div class="zone-progress-top">
+
+                                <span class="zone-progress-label">
+                                    Cancellation Rate
+                                </span>
+
+                                <span class="zone-progress-value">
+                                    {{ performance.cancellation_rate }}%
+                                </span>
+
+                            </div>
+
+                            <div class="zone-progress-track">
+
+                                <div
+                                    class="zone-progress-fill zone-cancellation"
+                                    data-width="{{ performance.cancellation_rate }}"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- HEALTH -->
+                <div class="zone-card">
+
+                    <div class="zone-card-header">
+
+                        <h2 class="zone-card-title">
+                            Marketplace Health
+                        </h2>
+
+                        <p class="zone-card-subtitle">
+                            Operational interpretation
+                        </p>
+
+                    </div>
+
+
+                    <div class="zone-metric-row">
+
+                        <span class="zone-metric-name">
+                            Completion Rate
+                        </span>
+
+                        <span class="zone-metric-value">
+                            {{ performance.completion_rate }}%
+                        </span>
+
+                    </div>
+
+
+                    <div class="zone-metric-row">
+
+                        <span class="zone-metric-name">
+                            Cancellation Rate
+                        </span>
+
+                        <span class="zone-metric-value">
+                            {{ performance.cancellation_rate }}%
+                        </span>
+
+                    </div>
+
+
+                    <div class="zone-metric-row">
+
+                        <span class="zone-metric-name">
+                            Average Fare
+                        </span>
+
+                        <span class="zone-metric-value">
+                            ₹{{ "{:,.2f}".format(performance.average_fare) }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="zone-metric-row">
+
+                        <span class="zone-metric-name">
+                            Total Revenue
+                        </span>
+
+                        <span class="zone-metric-value">
+                            ₹{{ "{:,.2f}".format(performance.revenue) }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="zone-status-box">
+
+                        <div class="zone-status-title">
+                            Zone Status
+                        </div>
+
+                        {% if performance.cancellation_rate >= 15 %}
+
+                            <div class="zone-status-message zone-danger">
+                                High cancellation pressure
+                            </div>
+
+                        {% elif performance.cancellation_rate >= 10 %}
+
+                            <div class="zone-status-message zone-warning">
+                                Moderate cancellation pressure
+                            </div>
+
+                        {% else %}
+
+                            <div class="zone-status-message zone-good">
+                                Healthy cancellation level
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% else %}
+
+            <!-- EMPTY STATE -->
+
+            <div class="zone-empty">
+
+                <div class="zone-empty-icon">
+                    ⌖
+                </div>
+
+                <h2>
+                    Search for a Zone
+                </h2>
+
+                <p>
+                    Select a city and enter a zone name above to view
+                    requests, completed trips, cancellations, revenue,
+                    completion rate and cancellation performance.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        document.querySelectorAll(".zone-progress-fill").forEach(function (bar) {
+
+            const value = parseFloat(bar.dataset.width || 0);
+
+            const safeValue = Math.max(0, Math.min(100, value));
+
+            bar.style.width = safeValue + "%";
+
+        });
+
+    });
+</script>
+
+</body>
+</html>
